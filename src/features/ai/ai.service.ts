@@ -72,26 +72,26 @@ export async function summarizeText(context: { env: Env }, text: string) {
   const result = await generateText({
     // @ts-expect-error 不知道为啥workers-ai-provider的类型定义不完整
     model: workersAI("@cf/meta/llama-3.3-70b-instruct-fp8-fast"),
+    temperature: 0.3,
     messages: [
       {
         role: "system",
         content:
-          "你是专业的摘要生成器。请生成简洁明了的摘要，不要超过200个汉字。请直接输出摘要内容，不要包含'摘要：'等前缀。",
+          `你是一个专业的中文摘要生成助手。
+请遵循以下规则：
+1. **语言限制**：无论原文是什么语言，必须且只能输出**简体中文**。
+2. **长度限制**：控制在 200 字以内。
+3. **内容要求**：直接输出摘要内容，不要包含"摘要："、"本文讲了"等废话，保留核心观点。`,
       },
       {
         role: "user",
         content: text,
       },
     ],
-    output: Output.object({
-      schema: z.object({
-        summary: z.string().describe("摘要"),
-      }),
-    }),
   });
 
   return {
-    summary: result.output.summary,
+    summary: result.text.trim(),
   };
 }
 
@@ -111,14 +111,19 @@ export async function generateTags(
   const result = await generateText({
     // @ts-expect-error 不知道为啥workers-ai-provider的类型定义不完整
     model: workersAI("@cf/meta/llama-3.3-70b-instruct-fp8-fast"),
+    temperature: 0,
     messages: [
       {
         role: "system",
-        content: `你是一个专业的博客文章标签生成器。
-你的任务是根据文章内容生成 3-5 个最相关的标签（Keywords）。
-请优先从"已存在的标签列表"中选择合适的标签，只有当现有标签完全不适用时才生成新标签。
-标签应当简洁、精准，通常为名词。
-返回结果必须是一个简单的字符串数组，不要包含任何解释。`,
+        content: `你是一个专业的SEO和内容分类专家。你的任务是为文章提取 3-5 个标签。
+
+请严格遵循以下步骤：
+1. **分析内容**：提取文章的核心技术栈、领域概念和关键实体。
+2. **匹配现有标签**：即使是同义词（如 "JS" 和 "JavaScript"），必须优先使用 provided "Existing Tags" 中的标准写法。
+3. **补充新标签**：仅在现有标签无法覆盖核心内容时，才生成新标签。
+4. **格式规范**：标签必须是名词，不要使用长句，使用行业标准术语。
+
+请直接输出结果，无需解释。`,
       },
       {
         role: "user",
@@ -128,7 +133,7 @@ ${JSON.stringify(existingTags)}
 文章标题：${content.title}
 文章摘要：${content.summary || "无"}
 文章内容预览：
-${content.content ? content.content.slice(0, 1000) : "无"}
+${content.content ? content.content.slice(0, 6000) : "无"}
 ...`,
       },
     ],
