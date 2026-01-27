@@ -8,7 +8,7 @@ import * as SearchService from "@/features/search/search.service";
 import {
   adminMiddleware,
   createCacheHeaderMiddleware,
-  createPublicRateLimitMiddleware,
+  createRateLimitMiddleware,
 } from "@/lib/middlewares";
 
 export const buildSearchIndexFn = createServerFn()
@@ -28,7 +28,7 @@ export const deleteSearchDocFn = createServerFn({ method: "POST" })
 export const searchDocsFn = createServerFn()
   .middleware([
     createCacheHeaderMiddleware("immutable"),
-    createPublicRateLimitMiddleware({
+    createRateLimitMiddleware({
       capacity: 30,
       interval: "1m",
       key: "search:query",
@@ -40,7 +40,7 @@ export const searchDocsFn = createServerFn()
 export const getIndexVersionFn = createServerFn()
   .middleware([
     createCacheHeaderMiddleware("private"),
-    createPublicRateLimitMiddleware({
+    createRateLimitMiddleware({
       capacity: 30,
       interval: "1m",
       key: "search:getIndexVersion",

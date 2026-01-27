@@ -13,14 +13,14 @@ import * as AIService from "@/features/ai/ai.service";
 import {
   adminMiddleware,
   createCacheHeaderMiddleware,
-  createPublicRateLimitMiddleware,
+  createRateLimitMiddleware,
 } from "@/lib/middlewares";
 
 // ============ Public API ============
 
 export const getTagsFn = createServerFn()
   .middleware([
-    createPublicRateLimitMiddleware({
+    createRateLimitMiddleware({
       capacity: 60,
       interval: "1m",
       key: "tags:getAll",

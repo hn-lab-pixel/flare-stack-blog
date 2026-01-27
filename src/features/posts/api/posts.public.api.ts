@@ -7,13 +7,13 @@ import {
 import * as PostService from "@/features/posts/posts.service";
 import {
   createCacheHeaderMiddleware,
-  createPublicRateLimitMiddleware,
+  createRateLimitMiddleware,
 } from "@/lib/middlewares";
 
 export const getPostsCursorFn = createServerFn()
   .middleware([
-    createPublicRateLimitMiddleware({
-      capacity: 60,
+    createRateLimitMiddleware({
+      capacity:30,
       interval: "1m",
       key: "posts:getCursor",
     }),
@@ -26,8 +26,8 @@ export const getPostsCursorFn = createServerFn()
 
 export const findPostBySlugFn = createServerFn()
   .middleware([
-    createPublicRateLimitMiddleware({
-      capacity: 60,
+    createRateLimitMiddleware({
+      capacity:30,
       interval: "1m",
       key: "posts:findBySlug",
     }),
@@ -40,8 +40,8 @@ export const findPostBySlugFn = createServerFn()
 
 export const getRelatedPostsFn = createServerFn()
   .middleware([
-    createPublicRateLimitMiddleware({
-      capacity: 120, // Higher limit for related posts as it's auto-fetched
+    createRateLimitMiddleware({
+      capacity: 60,
       interval: "1m",
       key: "posts:getRelated",
     }),
