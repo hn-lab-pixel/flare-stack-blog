@@ -118,7 +118,7 @@ export const CommentEditor = ({
         type={modalType}
         initialUrl={modalInitialUrl}
         onClose={() => setModalType(null)}
-        onSubmit={(url) => {
+        onSubmit={(url, attrs) => {
           if (modalType === "LINK") {
             const href = normalizeLinkHref(url);
             if (href === "") {
@@ -132,7 +132,11 @@ export const CommentEditor = ({
                 .run();
             }
           } else if (modalType === "IMAGE") {
-            editor.chain().focus().setImage({ src: url }).run();
+            editor
+              .chain()
+              .focus()
+              .setImage({ src: url, ...attrs })
+              .run();
           }
           setModalType(null);
         }}

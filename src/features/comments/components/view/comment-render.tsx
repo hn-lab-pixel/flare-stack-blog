@@ -14,13 +14,31 @@ export function renderCommentReact(content: JSONContent | null) {
           const attrs = node.attrs as {
             src: string;
             alt?: string | null;
+            width?: number | string;
+            height?: number | string;
           };
 
           const alt =
             (attrs.alt && attrs.alt !== "null" ? attrs.alt : null) ||
             "comment image";
 
-          return <ImageDisplay src={attrs.src} alt={alt} />;
+          const width =
+            typeof attrs.width === "string"
+              ? parseInt(attrs.width)
+              : attrs.width;
+          const height =
+            typeof attrs.height === "string"
+              ? parseInt(attrs.height)
+              : attrs.height;
+
+          return (
+            <ImageDisplay
+              src={attrs.src}
+              alt={alt}
+              width={width || undefined}
+              height={height || undefined}
+            />
+          );
         },
       },
     },

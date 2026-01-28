@@ -56,7 +56,10 @@ export const Editor = memo(function Editor({
     setModalOpen("IMAGE");
   }, []);
 
-  const handleModalSubmit = (url: string) => {
+  const handleModalSubmit = (
+    url: string,
+    attrs?: { width?: number; height?: number },
+  ) => {
     if (modalOpen === "LINK") {
       if (url === "") {
         editor?.chain().focus().extendMarkRange("link").unsetLink().run();
@@ -66,7 +69,11 @@ export const Editor = memo(function Editor({
       }
     } else if (modalOpen === "IMAGE") {
       if (url) {
-        editor?.chain().focus().setImage({ src: url }).run();
+        editor
+          ?.chain()
+          .focus()
+          .setImage({ src: url, ...attrs })
+          .run();
       }
     }
 

@@ -13,8 +13,9 @@ import { CACHE_CONTROL } from "@/lib/constants";
 
 export async function upload(
   context: DbContext & { executionCtx: ExecutionContext },
-  file: File,
+  input: { file: File; width?: number; height?: number },
 ) {
+  const { file, width, height } = input;
   const uploaded = await Storage.putToR2(context.env, file);
 
   try {
@@ -24,6 +25,8 @@ export async function upload(
       fileName: uploaded.fileName,
       mimeType: uploaded.mimeType,
       sizeInBytes: uploaded.sizeInBytes,
+      width,
+      height,
     });
     return mediaRecord;
   } catch (error) {

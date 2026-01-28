@@ -18,7 +18,17 @@ export const UploadMediaInputSchema = z
       throw new Error("File size must be less than 10MB");
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type))
       throw new Error("File type must be an image");
-    return file;
+
+    const rawWidth = formData.get("width");
+    const rawHeight = formData.get("height");
+    const parsedWidth = rawWidth ? parseInt(rawWidth.toString()) : NaN;
+    const parsedHeight = rawHeight ? parseInt(rawHeight.toString()) : NaN;
+
+    return {
+      file,
+      width: Number.isNaN(parsedWidth) ? undefined : parsedWidth,
+      height: Number.isNaN(parsedHeight) ? undefined : parsedHeight,
+    };
   });
 
 export const UpdateMediaNameInputSchema = z.object({

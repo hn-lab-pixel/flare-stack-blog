@@ -23,11 +23,19 @@ export function ImageBlock({
             }
         `}
       >
-        <div className="relative bg-muted/20">
+        <div
+          className="relative bg-muted/20 overflow-hidden"
+          style={{
+            aspectRatio:
+              node.attrs.width && node.attrs.height
+                ? `${node.attrs.width} / ${node.attrs.height}`
+                : "auto",
+          }}
+        >
           <img
             src={src}
             alt={node.attrs.alt}
-            className={`w-full h-auto max-h-[80vh] object-contain mx-auto ${
+            className={`w-full h-auto max-h-[80vh] object-contain mx-auto transition-opacity duration-300 ${
               isUploading ? "opacity-50 grayscale" : "opacity-100"
             }`}
           />

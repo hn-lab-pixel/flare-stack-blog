@@ -22,7 +22,7 @@ interface InsertModalProps {
   type: ModalType;
   initialUrl?: string;
   onClose: () => void;
-  onSubmit: (url: string) => void;
+  onSubmit: (url: string, attrs?: { width?: number; height?: number }) => void;
 }
 
 const MediaItem = memo(
@@ -94,7 +94,7 @@ const InsertModalInternal: React.FC<InsertModalProps> = ({
   }, [type]);
 
   const [inputUrl, setInputUrl] = useState(initialUrl);
-  const [selectedMediaKey, setSelectedMediaKey] = useState<string | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<MediaAsset | null>(null);
 
   const {
     mediaItems,
@@ -128,7 +128,7 @@ const InsertModalInternal: React.FC<InsertModalProps> = ({
   useEffect(() => {
     if (type) {
       setInputUrl(initialUrl);
-      setSelectedMediaKey(null);
+      setSelectedMedia(null);
       setSearchQuery("");
     }
   }, [initialUrl, type, setSearchQuery]);
@@ -141,7 +141,16 @@ const InsertModalInternal: React.FC<InsertModalProps> = ({
       return;
     }
 
-    if (trimmed) onSubmit(trimmed);
+    if (trimmed) {
+      if (selectedMedia && selectedMedia.url === trimmed) {
+        onSubmit(trimmed, {
+          width: selectedMedia.width || undefined,
+          height: selectedMedia.height || undefined,
+        });
+      } else {
+        onSubmit(trimmed);
+      }
+    }
   };
 
   if (!shouldRender) return null;
@@ -240,9 +249,9 @@ const InsertModalInternal: React.FC<InsertModalProps> = ({
                       <MediaItem
                         key={media.key}
                         media={media}
-                        isSelected={selectedMediaKey === media.key}
+                        isSelected={selectedMedia?.key === media.key}
                         onSelect={(m) => {
-                          setSelectedMediaKey(m.key);
+                          setSelectedMedia(m);
                           setInputUrl(m.url);
                         }}
                       />
@@ -280,7 +289,7 @@ const InsertModalInternal: React.FC<InsertModalProps> = ({
                 value={inputUrl}
                 onChange={(e) => {
                   setInputUrl(e.target.value);
-                  if (selectedMediaKey) setSelectedMediaKey(null);
+                  if (selectedMedia) setSelectedMedia(null);
                 }}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                 placeholder="https://..."

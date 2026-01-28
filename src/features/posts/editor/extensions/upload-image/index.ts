@@ -2,8 +2,14 @@ import { Extension } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { EditorView } from "@tiptap/pm/view";
 
+export interface ImageUploadResult {
+  url: string;
+  width?: number;
+  height?: number;
+}
+
 export interface ImageUploadOptions {
-  onUpload: (file: File) => Promise<string>;
+  onUpload: (file: File) => Promise<ImageUploadResult>;
   onError?: (error: Error) => void;
 }
 
@@ -26,7 +32,7 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
 
   addOptions() {
     return {
-      onUpload: async () => "",
+      onUpload: async () => ({ url: "" }),
       onError: undefined,
     };
   },
@@ -87,7 +93,7 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
           // 3. Trigger the actual upload asynchronously
           this.options
             .onUpload(file)
-            .then((remoteUrl) => {
+            .then((result) => {
               if (view.isDestroyed) {
                 URL.revokeObjectURL(blobUrl);
                 return;
@@ -111,7 +117,12 @@ export const ImageUpload = Extension.create<ImageUploadOptions>({
                       descendant.type.name === "image" &&
                       descendant.attrs.src === blobUrl
                     ) {
-                      const newAttrs = { ...descendant.attrs, src: remoteUrl };
+                      const newAttrs = {
+                        ...descendant.attrs,
+                        src: result.url,
+                        width: result.width || descendant.attrs.width,
+                        height: result.height || descendant.attrs.height,
+                      };
                       currentTr.setNodeMarkup(nodePos, undefined, newAttrs);
                       replaced = true;
                       return false;

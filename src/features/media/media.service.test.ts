@@ -55,7 +55,7 @@ describe("MediaService", () => {
         type: "image/png",
       });
 
-      const result = await MediaService.upload(adminContext, file);
+      const result = await MediaService.upload(adminContext, { file });
 
       expect(result).toMatchObject({
         fileName: "test-image.png",
@@ -93,7 +93,7 @@ describe("MediaService", () => {
         new Error("DB Error"),
       );
 
-      await expect(MediaService.upload(adminContext, file)).rejects.toThrow(
+      await expect(MediaService.upload(adminContext, { file })).rejects.toThrow(
         "Failed to insert media record",
       );
 
@@ -113,7 +113,7 @@ describe("MediaService", () => {
         type: "image/jpeg",
       });
 
-      const result = await MediaService.upload(adminContext, file);
+      const result = await MediaService.upload(adminContext, { file });
 
       expect(result.sizeInBytes).toBe(1024);
     });
@@ -128,7 +128,7 @@ describe("MediaService", () => {
       const file = new File(["delete me"], "to-delete.png", {
         type: "image/png",
       });
-      const uploaded = await MediaService.upload(adminContext, file);
+      const uploaded = await MediaService.upload(adminContext, { file });
 
       // Reset mock to track deletion call
       vi.mocked(Storage.deleteFromR2).mockClear();
@@ -163,7 +163,7 @@ describe("MediaService", () => {
         const file = new File([`content ${i}`], `query-test-${i}.png`, {
           type: "image/png",
         });
-        await MediaService.upload(adminContext, file);
+        await MediaService.upload(adminContext, { file });
       }
     });
 
@@ -199,7 +199,7 @@ describe("MediaService", () => {
       const uniqueFile = new File(["unique"], "special-unique-file.png", {
         type: "image/png",
       });
-      await MediaService.upload(adminContext, uniqueFile);
+      await MediaService.upload(adminContext, { file: uniqueFile });
 
       const result = await MediaService.getMediaList(adminContext, {
         search: "special-unique",
@@ -220,7 +220,7 @@ describe("MediaService", () => {
       const file = new File(["rename me"], "original-name.png", {
         type: "image/png",
       });
-      const uploaded = await MediaService.upload(adminContext, file);
+      const uploaded = await MediaService.upload(adminContext, { file });
 
       await MediaService.updateMediaName(adminContext, {
         key: uploaded.key,
@@ -243,7 +243,7 @@ describe("MediaService", () => {
       const file = new File(["linked image"], "linked-image.png", {
         type: "image/png",
       });
-      const media = await MediaService.upload(adminContext, file);
+      const media = await MediaService.upload(adminContext, { file });
 
       // Create a post
       const { id: postId } = await PostService.createEmptyPost(adminContext);
@@ -275,7 +275,7 @@ describe("MediaService", () => {
       const file = new File(["unused"], "unused-image.png", {
         type: "image/png",
       });
-      const media = await MediaService.upload(adminContext, file);
+      const media = await MediaService.upload(adminContext, { file });
 
       const isInUse = await MediaService.isMediaInUse(adminContext, media.key);
       expect(isInUse).toBe(false);
@@ -288,7 +288,7 @@ describe("MediaService", () => {
 
       for (const fileName of files) {
         const file = new File(["content"], fileName, { type: "image/png" });
-        const media = await MediaService.upload(adminContext, file);
+        const media = await MediaService.upload(adminContext, { file });
         mediaKeys.push(media.key);
       }
 

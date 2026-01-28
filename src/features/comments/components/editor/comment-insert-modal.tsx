@@ -11,7 +11,7 @@ interface InsertModalProps {
   type: ModalType;
   initialUrl?: string;
   onClose: () => void;
-  onSubmit: (url: string) => void;
+  onSubmit: (url: string, attrs?: { width?: number; height?: number }) => void;
 }
 
 const InsertModalInternal: React.FC<InsertModalProps> = ({
