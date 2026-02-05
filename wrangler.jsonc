@@ -1,29 +1,30 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "my-blog",
+  "name": "你软博客",
   "compatibility_date": "2025-10-11",
   "compatibility_flags": ["nodejs_compat"],
   "main": "./src/server.ts",
+  "keep_vars": true,
   "observability": {
     "enabled": true,
   },
   "routes": [
     {
-      "pattern": "DOMAIN_PLACEHOLDER",
+      "pattern": "blog.niruan.cn",
       "custom_domain": true,
     },
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_id": "D1_DATABASE_ID",
+      "database_id": "e76f1aa7-fb5f-4b24-9cfe-1895547e35dd",
       "migrations_dir": "migrations",
       "remote": true,
     },
   ],
   "r2_buckets": [
     {
-      "bucket_name": "bucket-name-placeholder",
+      "bucket_name": "blog1",
       "binding": "R2",
       "remote": true,
     },
@@ -31,7 +32,7 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "KV_NAMESPACE_ID",
+      "id": "b4b91fbbb1e84fd5adda960b0df8d8d7",
       "remote": true,
     },
   ],
